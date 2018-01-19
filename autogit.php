@@ -10,7 +10,14 @@
  * @license   MIT
  */
 
-if (c::get('autogit.active', true)) {
+//extra conditions to prevent loading of plugin
+$inPanel = function_exists('panel');
+$currentUrl = new Obj();
+$currentUrl->value = url::current();
+$currentUrl->fragments = url::fragments($currentUrl->value) ?: [];
+$currentUrl->isWebhook = in_array('autogit', $currentUrl->fragments);
+
+if (c::get('autogit.active', true) && ( $currentUrl->isWebhook || $inPanel ) ) {
     // Load Auto Git class and dependencies
     require_once(__DIR__.DS.'vendor'.DS.'autoload.php');
     require_once(__DIR__.DS.'lib'.DS.'autogit.php');
